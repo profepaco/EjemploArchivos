@@ -24,5 +24,11 @@ namespace EjemploArchivos
             Carrera = carrera;
             Semestre = 1;
         }
+
+        public override string ToString()
+        {
+            return String.Format("Nombre: {0}\nNumero de control: {1}\nCarrera: {2}",
+                Nombre, NoControl, Carrera);
+        }
     }
 }

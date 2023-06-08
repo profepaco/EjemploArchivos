@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,9 +12,17 @@ namespace EjemploArchivos
     {
         //Esta lista almacenara los alumnos
         private List<Alumno> listaAlumnos;
+        private string path = "archivo.dat";
         public AdministraAlumno()
         {
-            listaAlumnos = new List<Alumno>();
+            if (File.Exists(path))
+            {
+                listaAlumnos = deserealizar();
+            }
+            else
+            {
+                listaAlumnos = new List<Alumno>();
+            }
         }
 
         public void agregarAlumno(Alumno alumno)
@@ -52,6 +62,41 @@ namespace EjemploArchivos
 
         public List<Alumno> todosLosAlumnos() {
             return listaAlumnos;
+        }
+
+        private List<Alumno> deserealizar()
+        {
+            FileStream fs = new FileStream(path, FileMode.Open);
+            List<Alumno> lista = null;
+            try
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                lista = (List<Alumno>)bf.Deserialize(fs);
+                
+            }catch(Exception ex) { 
+                Console.Error.WriteLine(ex.Message);
+            }
+            finally
+            {
+                fs.Close();
+            }
+            return lista;
+        }
+
+        public void cerrar()
+        {
+            FileStream fs = new FileStream(path, FileMode.Create);
+            try
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(fs, listaAlumnos);
+            }catch(Exception ex){
+                Console.Error.WriteLine(ex.Message);
+            }
+            finally
+            {
+                fs.Close();
+            }
         }
     } 
 }
